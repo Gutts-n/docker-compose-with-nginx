@@ -19,6 +19,9 @@ services:
   app:
     container_name: app
     entrypoint: "dockerize --wait tcp://db:3306 --timeout 20s node index.js"
+    tty: true
+    volumes:
+      - ./node:/app
     build: 
       context: ./node
     networks:
@@ -28,6 +31,9 @@ services:
   nginx:
     entrypoint: "dockerize --wait http://app:3000/ --timeout 30s /docker-entrypoint.sh"
     command: ["nginx" ,"-g", "daemon off;"]
+    tty: true
+    volumes:
+      - ./nginx:/etc/nginx/
     build:
       context: ./nginx
     container_name: nginx-proxy-reverse

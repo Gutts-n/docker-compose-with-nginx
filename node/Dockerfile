@@ -1,11 +1,10 @@
-# Case to the Dockerfile install inside of the container
-# FROM node:lts-hydrogen AS build
+FROM node:lts-hydrogen AS build
 
-# WORKDIR /app
+WORKDIR /app
 
-# COPY . .
+COPY . .
 
-# RUN npm install
+RUN npm install
 
 FROM node:lts-hydrogen
 
@@ -18,8 +17,6 @@ RUN apt-get update \
     && wget -O - https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz | tar xzf - -C /usr/local/bin \
     && apt-get autoremove -yqq --purge wget && rm -rf /var/lib/apt/lists/*
 
-COPY . .
-
-EXPOSE 3000
+COPY --from=build /app .
 
 CMD ["node", "index.js"]
